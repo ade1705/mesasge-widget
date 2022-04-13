@@ -4,6 +4,7 @@ var copyWebpackPlugin = require('copy-webpack-plugin');
 const bundleOutputDir = './dist';
 
 module.exports = (env) => {
+    const isDevBuild = !(env && env.prod);
     return [{
         entry: './src/main.js',
         mode: 'development',
@@ -14,8 +15,37 @@ module.exports = (env) => {
         devServer: {
             static: './'
         },
-        plugins: [new webpack.SourceMapDevToolPlugin(), new copyWebpackPlugin({
-            patterns: [{ from: 'demo/' }]
-        })]
+        module: {
+            rules: [
+                { test: /\.html$/i, use: 'html-loader' },
+                {
+                    test: /\.s[ac]ss$/i,
+                    use: [
+                        "style-loader",
+                        "css-loader",
+                        "sass-loader",
+                    ],
+                },
+                {
+                    test: /\.js$/i,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [['@babel/env', {
+                                'targets': {
+                                    'browsers': ['ie 6', 'safari 7']
+                                }
+                            }]]
+                        }
+                    }
+                }
+            ]
+        },
+        plugins: isDevBuild
+            ? [new webpack.SourceMapDevToolPlugin(), new copyWebpackPlugin({
+                patterns: [{ from: 'demo/' }]
+            })]
+            : [new webpack.optimize.UglifyJsPlugin()]
     }];
 };
