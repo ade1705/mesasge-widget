@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+@import '~quill/dist/quill.core.css';
+@import '~quill/dist/quill.bubble.css';
+@import '~quill/dist/quill.snow.css';
 .js-widget-overlay{
     z-index: 10001;
     position: fixed;
@@ -42,6 +45,7 @@ stroke-linecap: round;
     }
 }
 
+
 .widget {
     font-family: 'Inter', sans-serif;
     font-size: 13px;
@@ -75,12 +79,11 @@ stroke-linecap: round;
         .from-email {
             font-weight: 500;
         }
-        .subject {
+        .text-input {
             all: unset;
             width: 100%;
         }
         .message {
-            all: unset;
             width: 100%;
         }
         .subject-count {
@@ -110,16 +113,17 @@ stroke-linecap: round;
     .modal-footer {
         padding: 13px 30px;
         background-color: #f7f7f7;
-        .send-button {
-            padding: 10px 12px;
-            background-color: #111111;
-            border-radius: 8px;
-            border: none;
-            color: #fff;
-        }
-        .send-icon {
-            padding-left: 5px;
-        }
+    }
+
+    .send-button {
+        padding: 10px 12px;
+        background-color: #111111;
+        border-radius: 8px;
+        border: none;
+        color: #fff;
+    }
+    .send-icon {
+        padding-left: 5px;
     }
     .rotate-45 {
         transform: rotate(-45deg);
@@ -145,7 +149,30 @@ stroke-linecap: round;
     .padding-top-15 {
         padding-top: 15px;
     }
+    .margin-top-15 {
+        margin-top: 15px;
+    }
+    .height {
+        &-200 {
+            height: 200px;
+        }
+        &-325 {
+            height: 325px;
+        }
+    }
     .fill-white {
         fill: white;
+    }
+    .ql-toolbar.ql-snow {
+        border: none;
+    }
+    .ql-container.ql-snow {
+        border: none;
+    }
+    button:disabled {
+        opacity: 0.3;
+    }
+    button {
+        cursor: pointer;
     }
 }
