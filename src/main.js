@@ -1,9 +1,10 @@
 import WidgetRenderer from "./widget/widget";
 import Authenticator from "./authenticator";
-import EnquiryMaker from "./send/enquiry-maker";
+import EnquiryService from "./send/enquiry-service";
+import StoreFactory from "./send/stores/store-factory";
 
 const start = (window) => {
-    const renderer = new WidgetRenderer(window, new Authenticator(window), new EnquiryMaker());
+    const renderer = new WidgetRenderer(window, new Authenticator(window), new EnquiryService(new StoreFactory()));
     renderer.render();
 }
 

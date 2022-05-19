@@ -8,7 +8,7 @@ class WidgetRenderer {
     modalLoader = null;
     unAuthenticatedBlock = null;
     sendButton = null;
-    enquiryMaker; subject; editor;
+    enquiryMaker; subject; editor; authenticatedBlock
 
     constructor(window, authenticator, enquiryMaker) {
         this.authenticator = authenticator;
@@ -25,6 +25,16 @@ class WidgetRenderer {
         modal.style.display = "none";
     }
 
+    modalLoaderStart = (modalLoader, block) => {
+        modalLoader.style.display = "block";
+        block.style.opacity = "0.1";
+    }
+
+    modalLoaderEnd = (modalLoader, block) => {
+        modalLoader.style.display = "none";
+        block.style.opacity = "1";
+    }
+
     authenticateUser = () => {
         const authenticateButton = document.querySelector('[data-id="authenticateUser"]');
         authenticateButton.disabled = true;
@@ -36,16 +46,14 @@ class WidgetRenderer {
         });
         authenticateButton.addEventListener('click',  () => {
             authenticateButton.disabled = true;
-            this.modalLoader.style.display = "block";
-            this.unAuthenticatedBlock.style.opacity = "0.1";
+            this.modalLoaderStart(this.modalLoader, this.unAuthenticatedBlock);
             this.authenticator.authenticate(
                 email,
                 authenticateButton,
                 this.handleSuccess,
                 this.handleError,
             ).then(() => {
-                this.unAuthenticatedBlock.style.opacity = "1";
-                this.modalLoader.style.display = "none";
+                this.modalLoaderEnd(this.modalLoader, this.unAuthenticatedBlock);
                 authenticateButton.disabled = false;
             });
         });
@@ -65,22 +73,32 @@ class WidgetRenderer {
     }
     checkIfAuthenticated = () => {
         const authenticated = window.localStorage.getItem('isAuthenticated') ?? false;
-        const authenticatedBlock = document.querySelector('[data-id="authenticated"]');
-        authenticatedBlock.style.display = "none";
+        this.authenticatedBlock.style.display = "none";
         this.sendButton.style.display = "none";
         if (authenticated) {
             this.unAuthenticatedBlock.style.display = "none";
-            authenticatedBlock.style.display = "block";
-            this.sendButton.style.display = "block";
+            this.authenticatedBlock.style.display = "block";
+            this.sendButton.style.display = "flex";
         }
     }
     handleSendButtonClick = () => {
-        return () => {
-            console.log('send button clicked');
-            this.enquiryMaker.make((new Enquiry())
-                .setSubject(this.subject.value)
-                .setEmail(window.localStorage.getItem('emailForSignIn') ?? '')
-                .setMessage(this.editor.root.innerHTML));
+        return async () => {
+            this.modalLoaderStart(this.modalLoader, this.authenticatedBlock);
+            try {
+                await this.enquiryMaker.make((new Enquiry())
+                    .setSubject(this.subject.value)
+                    .setEmail(window.localStorage.getItem('emailForSignIn') ?? '')
+                    .setMessage(this.editor.root.innerHTML));
+                const enquiryReceived = document.querySelector('[data-id="enquiry-received"]');
+                enquiryReceived.style.display = "block";
+                this.authenticatedBlock.style.display = "none";
+                console.log(this.sendButton);
+                this.sendButton.style.display = "none";
+            } catch (e) {
+                console.log(e)
+            } finally {
+                this.modalLoaderEnd(this.modalLoader, this.authenticatedBlock);
+            }
         }
     }
 
@@ -91,8 +109,10 @@ class WidgetRenderer {
             });
             this.modalLoader = document.querySelector('[data-id="modal-loader"]');
             this.unAuthenticatedBlock = document.querySelector('[data-id="not-authenticated"]');
+            this.authenticatedBlock = document.querySelector('[data-id="authenticated"]');
             this.sendButton = document.querySelector('[data-id="send-button"]');
             this.modalLoader.style.display = "none";
+            this.sendButton.addEventListener('click',  this.handleSendButtonClick());
             this.setUpSubject();
             this.checkIfAuthenticated();
         }, 1000);
@@ -106,8 +126,6 @@ class WidgetRenderer {
         const notificationIcon = document.querySelector('[data-id="notification-icon"]');
         notificationIcon.classList.add("hover");
         this.authenticateUser();
-        const sendButton = document.querySelector('[data-id="send-button"]');
-        sendButton.addEventListener('click',  this.handleSendButtonClick());
         smiley.addEventListener('click',  () => {
             smiley.style.display = "none";
             notificationIcon.classList.remove("hover");

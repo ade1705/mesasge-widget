@@ -16,7 +16,15 @@ class Enquiry {
         return this;
     }
 
-    toJson = () => JSON.stringify({ email: this.email, subject: this.subject, message: this.message })
+    build = () => ({
+        email: this.email,
+        subject: this.subject,
+        message: this.message,
+        createdTimeStamp: Math.round(new Date().getTime()/1000),
+        isProcessed: false,
+    })
+
+    toJson = () => JSON.stringify(this.build())
 }
 
 export default Enquiry;

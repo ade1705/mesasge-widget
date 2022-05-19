@@ -35,6 +35,24 @@ const button = `<div class="widget">
             <div id="modal-loader" data-id="modal-loader">
                 ${loader}
             </div>
+            <div class="height-325" data-id="enquiry-received" style="display: none">
+                <div>
+                    <div class="padding-top-15">
+                        <svg class="smiley" width="70" height="70" viewBox="0 0 70 70">
+                            <polygon fill="#295be6"
+                                points="0,10 0,42 10,42 5,56 25,42 56,42 56,0" />
+                            <path class="mouth" d="M18,28 Q30,38 42,28" />
+                            <circle r="10" cx="56" cy="16" fill="red" />
+                            <circle class="notification_icon_inner" cx="56" cy="16" r="2" fill="#ffffff"/>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="margin-top-15">
+                        <h3>Thanks for contacting us.</h3> We have recieved your email and will get back to you as soon as we can. <br /><br />Thank you, <br />Talkio
+                    </div>
+                </div>      
+            </div>
             <div class="height-325" data-id="not-authenticated">
                 <div>
                     <div class="padding-top-15">
