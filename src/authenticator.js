@@ -6,8 +6,8 @@ class Authenticator {
     auth = null;
     customer = {};
 
-    constructor(window) {
-        this.customer = this.getCustomer(window);
+    constructor(customer) {
+        this.customer = customer;
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         this.auth = auth;
@@ -29,7 +29,7 @@ class Authenticator {
 
     authenticate = (email, authenticateButton, handleSuccess, handleError) => {
         const actionCodeSettings = {
-            url: this.customer.domain,
+            url: this.customer.getDomain(),
             handleCodeInApp: true,
         };
 
@@ -46,15 +46,6 @@ class Authenticator {
                 resolve();
             });
         });
-    }
-
-    getCustomer = (window) => {
-        try {
-            let globalObject = window[window['talk2me_widget']];
-            return globalObject.q[0][1].customer;
-        } catch (e) {
-            console.error({ e });
-        }
     }
 }
 

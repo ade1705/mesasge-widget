@@ -8,11 +8,12 @@ class WidgetRenderer {
     modalLoader = null;
     unAuthenticatedBlock = null;
     sendButton = null;
-    enquiryMaker; subject; editor; authenticatedBlock
+    enquiryMaker; subject; editor; authenticatedBlock; customer;
 
-    constructor(window, authenticator, enquiryMaker) {
+    constructor(customer, authenticator, enquiryMaker) {
         this.authenticator = authenticator;
         this.enquiryMaker = enquiryMaker;
+        this.customer = customer;
     }
 
     showModal = (modalContent, modal) => {
@@ -92,7 +93,8 @@ class WidgetRenderer {
                 const enquiryReceived = document.querySelector('[data-id="enquiry-received"]');
                 enquiryReceived.style.display = "block";
                 this.authenticatedBlock.style.display = "none";
-                console.log(this.sendButton);
+                const successMessage = document.querySelector('[data-id="enquiry-recieved-success-message"] div');
+                successMessage.innerHTML = this.customer.getSuccessfulSendMessage();
                 this.sendButton.style.display = "none";
             } catch (e) {
                 console.log(e)
@@ -149,8 +151,7 @@ class WidgetRenderer {
     setUpSubject() {
         this.subject = document.querySelector('[data-id="subject"]');
         let subjectCount = document.querySelector('[data-id="subjectCount"]');
-        const globalObject = window[window['talk2me_widget']];
-        this.subject.value = globalObject.q[0][1].default.subject ?? '';
+        this.subject.value = this.customer.getSubject();
         subjectCount.textContent = this.subject.value.length;
         this.subject.addEventListener('input', function () {
             subjectCount.textContent = this.value.length;

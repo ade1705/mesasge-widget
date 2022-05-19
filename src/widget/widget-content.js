@@ -47,9 +47,9 @@ const button = `<div class="widget">
                         </svg>
                     </div>
                 </div>
-                <div>
+                <div data-id="enquiry-recieved-success-message">
                     <div class="margin-top-15">
-                        <h3>Thanks for contacting us.</h3> We have recieved your email and will get back to you as soon as we can. <br /><br />Thank you, <br />Talkio
+                        <h3>Thanks.</h3> We have recieved your email and will get back to you as soon as we can. <br /><br />Thank you, <br />Talkio
                     </div>
                 </div>      
             </div>
