@@ -4,6 +4,9 @@ import Quill from 'quill/dist/quill.js';
 
 class WidgetRenderer {
     customer = {};
+    modalLoader = null;
+    unAuthenticatedBlock = null;
+
     constructor(authenticator) {
         this.authenticator = authenticator;
     }
@@ -29,35 +32,41 @@ class WidgetRenderer {
         });
         authenticateButton.addEventListener('click',  () => {
             authenticateButton.disabled = true;
+            this.modalLoader.style.display = "block";
+            this.unAuthenticatedBlock.style.opacity = "0.1";
             this.authenticator.authenticate(
                 email,
                 authenticateButton,
                 this.handleSuccess,
                 this.handleError,
-            );
+            ).then(() => {
+                this.unAuthenticatedBlock.style.opacity = "1";
+                this.modalLoader.style.display = "none";
+                authenticateButton.disabled = false;
+            });
         });
     }
 
     handleSuccess = (emailElement, authenticateButton) => {
-        console.log("handle success");
-        authenticateButton.disabled = false;
+        const emailSentBlock = document.querySelector('[data-id="email-sent"]');
+        emailSentBlock.style.display = "block";
+        const emailNotSentBlock = document.querySelector('[data-id="email-not-sent"]');
+        emailNotSentBlock.style.display = "none";
         emailElement.value = "";
     }
 
     handleError = (authenticateButton) => {
-        console.log("handle error");
-        authenticateButton.disabled = false;
+        const emailSentErrorBlock = document.querySelector('[data-id="email-sent-error"]');
+        emailSentErrorBlock.style.display = "block";
     }
-
     checkIfAuthenticated = () => {
         const authenticated = window.localStorage.getItem('isAuthenticated') ?? false;
         const authenticatedBlock = document.querySelector('[data-id="authenticated"]');
         const sendButton = document.querySelector('[data-id="send-button"]');
         authenticatedBlock.style.display = "none";
         sendButton.style.display = "none";
-        const unAuthenticatedBlock = document.querySelector('[data-id="not-authenticated"]');
         if (authenticated) {
-            unAuthenticatedBlock.style.display = "none";
+            this.unAuthenticatedBlock.style.display = "none";
             authenticatedBlock.style.display = "block";
             sendButton.style.display = "block";
         }
@@ -69,6 +78,9 @@ class WidgetRenderer {
                 theme: 'snow',
             });
             this.checkIfAuthenticated();
+            this.modalLoader = document.querySelector('[data-id="modal-loader"]');
+            this.unAuthenticatedBlock = document.querySelector('[data-id="not-authenticated"]');
+            this.modalLoader.style.display = "none";
         }, 1000);
         const body = document.getElementsByTagName('body')[0];
         body.insertAdjacentHTML('beforeend', button);

@@ -19,7 +19,7 @@ class Authenticator {
             signInWithEmailLink(auth, email, window.location.href)
                 .then((result) => {
                     window.localStorage.removeItem('emailForSignIn');
-                    console.log(result.user);
+                    window.localStorage.setItem('isAuthenticated', true)
                 })
                 .catch((error) => {
                     console.error({ error });
@@ -33,7 +33,7 @@ class Authenticator {
             handleCodeInApp: true,
         };
 
-        sendSignInLinkToEmail(this.auth, email.value, actionCodeSettings)
+        return sendSignInLinkToEmail(this.auth, email.value, actionCodeSettings)
             .then((response) => {
                 window.localStorage.setItem('emailForSignIn', email.value);
                 handleSuccess(email, authenticateButton);
@@ -41,7 +41,11 @@ class Authenticator {
             .catch((error) => {
                 console.error({ error });
                 handleError(authenticateButton);
+            }).finally(() => {
+            return new Promise(function(resolve, reject) {
+                resolve();
             });
+        });
     }
 
     getCustomer = (window) => {
