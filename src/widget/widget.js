@@ -1,14 +1,18 @@
 import {button} from "./widget-content";
 import './widget.scss'
 import Quill from 'quill/dist/quill.js';
+import Enquiry from "../send/enquiry";
 
 class WidgetRenderer {
     customer = {};
     modalLoader = null;
     unAuthenticatedBlock = null;
+    sendButton = null;
+    enquiryMaker; subject; editor;
 
-    constructor(authenticator) {
+    constructor(window, authenticator, enquiryMaker) {
         this.authenticator = authenticator;
+        this.enquiryMaker = enquiryMaker;
     }
 
     showModal = (modalContent, modal) => {
@@ -62,41 +66,48 @@ class WidgetRenderer {
     checkIfAuthenticated = () => {
         const authenticated = window.localStorage.getItem('isAuthenticated') ?? false;
         const authenticatedBlock = document.querySelector('[data-id="authenticated"]');
-        const sendButton = document.querySelector('[data-id="send-button"]');
         authenticatedBlock.style.display = "none";
-        sendButton.style.display = "none";
+        this.sendButton.style.display = "none";
         if (authenticated) {
             this.unAuthenticatedBlock.style.display = "none";
             authenticatedBlock.style.display = "block";
-            sendButton.style.display = "block";
+            this.sendButton.style.display = "block";
+        }
+    }
+    handleSendButtonClick = () => {
+        return () => {
+            console.log('send button clicked');
+            this.enquiryMaker.make((new Enquiry())
+                .setSubject(this.subject.value)
+                .setEmail(window.localStorage.getItem('emailForSignIn') ?? '')
+                .setMessage(this.editor.root.innerHTML));
         }
     }
 
     render = () => {
         setTimeout(() => {
-            const editor = new Quill('.widget #editorjs', {
+            this.editor = new Quill('.widget #editorjs', {
                 theme: 'snow',
             });
-            this.checkIfAuthenticated();
             this.modalLoader = document.querySelector('[data-id="modal-loader"]');
             this.unAuthenticatedBlock = document.querySelector('[data-id="not-authenticated"]');
+            this.sendButton = document.querySelector('[data-id="send-button"]');
             this.modalLoader.style.display = "none";
+            this.setUpSubject();
+            this.checkIfAuthenticated();
         }, 1000);
         const body = document.getElementsByTagName('body')[0];
         body.insertAdjacentHTML('beforeend', button);
-        const subject = document.querySelector('[data-id="subject"]');
         const smiley = document.querySelector('[data-id="smiley"]');
         const closeButton = document.querySelector('[data-id="close-button"]');
         const notificationIconInner = document.querySelector('[data-id="notification-icon-inner"]');
         const modalContent = document.querySelector('[data-id="modal-content"]');
         const modal = document.querySelector('[data-id="modal"]');
         const notificationIcon = document.querySelector('[data-id="notification-icon"]');
-        let subjectCount = document.querySelector('[data-id="subjectCount"]');
         notificationIcon.classList.add("hover");
         this.authenticateUser();
-        subject.addEventListener('input', function () {
-           subjectCount.textContent = this.value.length;
-        });
+        const sendButton = document.querySelector('[data-id="send-button"]');
+        sendButton.addEventListener('click',  this.handleSendButtonClick());
         smiley.addEventListener('click',  () => {
             smiley.style.display = "none";
             notificationIcon.classList.remove("hover");
@@ -115,6 +126,17 @@ class WidgetRenderer {
             }), 1050);
             this.hideModal(modalContent, modal)
         })
+    }
+
+    setUpSubject() {
+        this.subject = document.querySelector('[data-id="subject"]');
+        let subjectCount = document.querySelector('[data-id="subjectCount"]');
+        const globalObject = window[window['talk2me_widget']];
+        this.subject.value = globalObject.q[0][1].default.subject ?? '';
+        subjectCount.textContent = this.subject.value.length;
+        this.subject.addEventListener('input', function () {
+            subjectCount.textContent = this.value.length;
+        });
     }
 }
 

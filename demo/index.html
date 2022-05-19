@@ -14,7 +14,7 @@
         js = d.createElement(s), fjs = d.getElementsByTagName(s)[0];
         js.id = o; js.src = f; js.async = 1; fjs.parentNode.insertBefore(js, fjs);
     }(window, document, 'script', 'mw', 'http://localhost:8080/widget.js'));
-    mw('init', { customer: { domain: 'http://localhost:8080' }});
+    mw('init', { default: { subject: 'Contact us today' }, customer: { domain: 'http://localhost:8080' }});
 </script>
 </body>
 </html>

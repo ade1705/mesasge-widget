@@ -21,6 +21,8 @@ const loader = `<div>
     </svg>
 </div>`;
 
+const email = window.localStorage.getItem('emailForSignIn') ?? '';
+
 const button = `<div class="widget">
 <div class="modal" data-id="modal">
     <div class="modal-content" data-id="modal-content">
@@ -70,7 +72,7 @@ const button = `<div class="widget">
                 <div class="align-items-center border-bottom padding-bottom-15">
                     <span>From: </span>
                     <img class="avatar" width="24" src="https://faces-img.xcdn.link/image-lorem-face-2286.jpg" data-src="https://faces-img.xcdn.link/thumb-lorem-face-5433_thumb.jpg">
-                    <span class="from-email">estherkolade@gmail.com</span>
+                    <span class="from-email">${email}</span>
                 </div>
                 <div class="justify-content-between border-bottom padding-bottom-15 padding-top-15">
                     <input type="text" maxlength="50" placeholder="Enter subject...." class="text-input" data-id="subject">

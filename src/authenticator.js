@@ -17,12 +17,12 @@ class Authenticator {
                 email = window.prompt('Please provide your email for confirmation');
             }
             signInWithEmailLink(auth, email, window.location.href)
-                .then((result) => {
-                    window.localStorage.removeItem('emailForSignIn');
-                    window.localStorage.setItem('isAuthenticated', true)
+                .then(() => {
+                    window.localStorage.setItem('isAuthenticated', true);
                 })
                 .catch((error) => {
                     console.error({ error });
+                    //ToDO: unable to authenticate for some reason, should show an error
                 });
         }
     }
@@ -34,7 +34,7 @@ class Authenticator {
         };
 
         return sendSignInLinkToEmail(this.auth, email.value, actionCodeSettings)
-            .then((response) => {
+            .then(() => {
                 window.localStorage.setItem('emailForSignIn', email.value);
                 handleSuccess(email, authenticateButton);
             })
@@ -42,7 +42,7 @@ class Authenticator {
                 console.error({ error });
                 handleError(authenticateButton);
             }).finally(() => {
-            return new Promise(function(resolve, reject) {
+            return new Promise(function(resolve) {
                 resolve();
             });
         });
