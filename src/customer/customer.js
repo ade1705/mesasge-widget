@@ -1,5 +1,5 @@
 class Customer {
-    globalObject;
+    globalObject; customerIdentifier;
 
     domain = "";
 
